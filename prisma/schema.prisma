@@ -12,3 +12,88 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id           Int        @id @default(autoincrement())
+  fullName     String     @unique
+  username     String     @unique
+  email        String     @unique
+  passwordHash String
+  roleId       Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now())
+  role         Role       @relation(fields: [roleId], references: [id])
+  Content      Contents[]
+}
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  roleName  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  users       User[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id             Int      @id @default(autoincrement())
+  permissionName String   @unique
+  permissionCode Int      @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+
+  roles RolePermission[]
+
+  @@index([permissionCode])
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model ContentType {
+  id        Int      @id @default(autoincrement())
+  typeName  String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  contents Contents[]
+}
+
+model ContentCategory {
+  id           Int      @id @default(autoincrement())
+  categoryName String   @unique
+  slug         String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  contents Contents[]
+
+  @@index([slug])
+}
+
+model Contents {
+  content_id    Int      @id @default(autoincrement())
+  title         String
+  slug          String
+  body          String
+  userId        Int
+  contentTypeId Int
+  categoryId    Int?
+  status        String   @default("Draft")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+
+  author      User             @relation(fields: [userId], references: [id])
+  contentType ContentType      @relation(fields: [contentTypeId], references: [id])
+  category    ContentCategory? @relation(fields: [categoryId], references: [id])
+
+  @@index([slug, status])
+}
