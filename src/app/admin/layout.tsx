@@ -5,7 +5,7 @@ function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div>{children}</div>;
+  return <>{children}</>;
 }
 
 export default AdminLayout;

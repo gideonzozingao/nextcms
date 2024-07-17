@@ -72,6 +72,7 @@ async function main() {
     data: [
       { typeName: 'News', slug: 'news' },
       { typeName: 'Blogs', slug: 'blogs' },
+      { typeName: 'Testimonials', slug: 'testimonials' },
       { typeName: 'About Page', slug: 'about-page' },
       { typeName: 'Product Page', slug: 'product-page' },
     ],
